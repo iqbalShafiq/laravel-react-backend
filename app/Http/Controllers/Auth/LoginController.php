@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -32,11 +33,8 @@ class LoginController extends Controller
         }
 
         $user->tokens()->delete();
-        $token = $user->createToken('web-token');
+        $token = $user->createToken('web-token')->plainTextToken;
 
-        return [
-            'user' => $user,
-            'token' => $token->plainTextToken
-        ];
+        return (new UserResource($user))->additional(compact('token'));
     }
 }
